@@ -80,21 +80,54 @@ public:
     }
     
 private:
-    std::vector<Coordinate> &all_coordinates;
+    const std::vector<Coordinate> &all_coordinates;
     std::vector<Prim> table;
     
     int num_true;
     int mode;
     
     
-    double distance(int a, int b);
+    double distance(int a, int b) const;
     void print_edges() const;
     
 };
 
 
 // =============================== Part B ================================== //
+struct Node {
+    int coord_index;
+    int next_index;
+    Node(int coord_in, int next_in)
+    : coord_index(coord_in), next_index(next_in) {}
+};
 
+class PartB {
+public:
+    //Constructor
+    PartB(std::vector<Coordinate> &vec, int mode_in)
+    : all_coordinates(vec), total(0), mode(mode_in) {
+        table.reserve(all_coordinates.size());
+        in_path.resize(all_coordinates.size());
+        std::fill(in_path.begin(), in_path.end(), false);
+    }
+    
+    void find_fast();
+    
+    
+    
+private:
+    const std::vector<Coordinate> &all_coordinates;
+    std::vector<Node> table;
+    std::vector<bool> in_path;
+    double total;
+    int mode;
+    
+    
+    void put_after(int first_index, int k);
+    double distance(int a, int b) const;
+    void find_and_add_min_edge(int k);
+    void print() const;
+};
 // =============================== Part C ================================== //
 
 

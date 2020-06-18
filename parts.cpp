@@ -59,7 +59,7 @@ void PartA::prims_algorithm(int start_index) {
     
 }
 
-double PartA::distance(int a, int b) {
+double PartA::distance(int a, int b) const {
     if(mode == MST) {
         if(all_coordinates[a].terrain == SEA && all_coordinates[b].terrain == LAND) {
             return numeric_limits<double>::infinity();
@@ -85,5 +85,78 @@ void PartA::print_edges() const {
 }
 
 // =============================== Part B ================================== //
+double PartB::distance(int a, int b) const {
+    double a_x = (double)all_coordinates[a].x;
+    double a_y = (double)all_coordinates[a].y;
+    double b_x = (double)all_coordinates[b].x;
+    double b_y = (double)all_coordinates[b].y;
+    return sqrt(((b_x - a_x) * (b_x - a_x)) + ((b_y - a_y) * (b_y - a_y)));
+}
+void PartB::find_fast() {
+    //First element of table
+    table.emplace_back(0,0);
+    in_path[0] = true;
+    
+    //Find second element of table
+    int smallest_index = 0;
+    double smallest = numeric_limits<double>::infinity();
+    for (int i = 1; i < (int)all_coordinates.size(); ++i) {
+        double dist_temp = distance(0, i);
+        if(dist_temp < smallest) {
+            smallest_index = i;
+            smallest = dist_temp;
+        }
+    }
+    table[0].next_index = 1;
+    table.emplace_back(smallest_index, 0);
+    in_path[smallest_index] = true;
+    total += smallest;
+    
+    // Coordinate 0 and smallest index are currently in path
+    for(int j = 0; j < (int)all_coordinates.size(); ++j) {
+        
+        //J is a unique location not added to path
+        if(j != 0 && j != smallest_index) {
+            find_and_add_min_edge(j);
+        }
+    }
+    if(mode == FASTTSP) {
+        print();
+    }
+}
 
+void PartB::find_and_add_min_edge(int k) {
+    
+    int smallest_index = 0;
+    double smallest = numeric_limits<double>::infinity();
+    for(int z = 0; z < (int)table.size() - 1; ++z) {
+        int i = table[z].coord_index;
+        int j = table[table[z].next_index].coord_index;
+        double temp_dist = distance(i, k) + distance(k, j) - distance(i, j);
+        
+        if(temp_dist < smallest) {
+            smallest = temp_dist;
+            smallest_index = z;
+        }
+    }
+    put_after(smallest_index, k);
+    total += smallest;
+}
+void PartB::put_after(int first_index, int k) {
+    int second_index = table[first_index].next_index;
+    int insertion_index = (int)table.size();
+    
+    table[first_index].next_index = insertion_index;
+    table.emplace_back(k, second_index);
+    
+}
+void PartB::print() const {
+    cout << total << "\n";
+    int index  = 0;
+    
+    do {
+        cout << table[index].coord_index << " ";
+        index = table[index].next_index;
+    } while (index != 0);
+}
 // =============================== Part C ================================== //
