@@ -37,8 +37,8 @@ void PartA::prims_algorithm(int start_index) {
         table[smallest_index].visited = true;
         running_total += sqrt(smallest);
         if(smallest_index == old_index) {
-            cout << "Cannot construct MST\n";
-            return;
+            cerr << "Cannot construct MST\n";
+            exit(1);
         }
         old_index = smallest_index;
         
