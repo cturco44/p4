@@ -92,8 +92,11 @@ int main(int argc, char * argv[]) {
     vector<Coordinate> all_coordinates;
     read_in(all_coordinates, mode);
     
-    PartA mist (all_coordinates, mode);
-    mist.prims_algorithm();
+    if(mode == MST) {
+        PartA mist (all_coordinates, mode);
+        mist.prims_algorithm();
+    }
+    
     
     
     return 0;
