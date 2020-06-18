@@ -65,15 +65,30 @@ struct Prim {
     
 };
 class PartA {
-    PartA(std::vector<Coordinate> &vec) : all_coordinates(vec) {
+public:
+    PartA(std::vector<Coordinate> &vec, int mode_in)
+                                        : all_coordinates(vec), mode(mode_in) {
+                                            
         table.resize(all_coordinates.size());
+        
+        num_true = (int)all_coordinates.size();
     }
-    void prims_algorithm(int start_index = 0);
     
+    void prims_algorithm(int start_index = 0);
+    void set_num_true(int num_true_in) {
+        num_true = num_true_in;
+    }
     
 private:
     std::vector<Coordinate> &all_coordinates;
     std::vector<Prim> table;
+    
+    int num_true;
+    int mode;
+    
+    
+    double distance(int a, int b);
+    void print_edges() const;
     
 };
 
