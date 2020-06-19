@@ -73,6 +73,13 @@ public:
         
         num_true = (int)all_coordinates.size();
     }
+    PartA(const std::vector<Coordinate> &vec, int mode_in)
+                                        : all_coordinates(vec), mode(mode_in) {
+                                            
+        table.resize(all_coordinates.size());
+        
+        num_true = (int)all_coordinates.size();
+    }
     
     void prims_algorithm(int start_index = 0);
     void set_num_true(int num_true_in) {
@@ -112,9 +119,7 @@ public:
     }
     
     void find_fast();
-    
-    
-    
+
 private:
     const std::vector<Coordinate> &all_coordinates;
     std::vector<Node> table;
@@ -129,6 +134,24 @@ private:
     void print() const;
 };
 // =============================== Part C ================================== //
-
+class PartC {
+public:
+    PartC(std::vector<Coordinate> &vec)
+    : all_coordinates(vec), path_dist(0), best_path_dist(0) {
+        path.reserve(all_coordinates.size());
+        best_path.reserve(all_coordinates.size());
+    }
+    
+    void genPerms(size_t permLength);
+    bool promising(size_t permLength);
+    double lowerbound(size_t permLength);
+private:
+    std::vector<int> path;
+    std::vector<int> best_path;
+    const std::vector<Coordinate> &all_coordinates;
+    double path_dist;
+    double best_path_dist;
+    
+};
 
 #endif /* parts_hpp */

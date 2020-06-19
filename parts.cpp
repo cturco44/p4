@@ -163,3 +163,28 @@ void PartB::print() const {
     cout << "\n";
 }
 // =============================== Part C ================================== //
+void PartC::genPerms(size_t permLength) {
+    if (permLength == path.size()) {
+      // Do something with the path
+      return;
+    } // if
+    if (!promising(permLength))
+      return;
+    for (size_t i = permLength; i < path.size(); ++i) {
+      swap(path[permLength], path[i]);
+      genPerms(permLength + 1);
+      swap(path[permLength], path[i]);
+    } // for
+}
+bool PartC::promising(size_t permLength) {
+    if(path.size() - permLength < 6) {
+        return true;
+    }
+    return lowerbound(permLength) < path_dist;
+}
+double PartC::lowerbound(size_t permLength) {
+    PartA a(all_coordinates, OPTTST);
+    
+    
+    return 2;
+}
