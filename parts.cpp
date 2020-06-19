@@ -160,5 +160,6 @@ void PartB::print() const {
         cout << table[index].coord_index << " ";
         index = table[index].next_index;
     } while (index != 0);
+    cout << "\n";
 }
 // =============================== Part C ================================== //
