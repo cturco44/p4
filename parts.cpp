@@ -110,14 +110,15 @@ void PartB::find_fast() {
     table[0].next_index = 1;
     table.emplace_back(smallest_index, 0);
     in_path[smallest_index] = true;
-    total += smallest;
+    total += 2*smallest;
     
     // Coordinate 0 and smallest index are currently in path
     for(int j = 0; j < (int)all_coordinates.size(); ++j) {
         
         //J is a unique location not added to path
-        if(j != 0 && j != smallest_index) {
+        if(in_path[j] == false) {
             find_and_add_min_edge(j);
+            in_path[j] = true;
         }
     }
     if(mode == FASTTSP) {
@@ -129,7 +130,7 @@ void PartB::find_and_add_min_edge(int k) {
     
     int smallest_index = 0;
     double smallest = numeric_limits<double>::infinity();
-    for(int z = 0; z < (int)table.size() - 1; ++z) {
+    for(int z = 0; z < (int)table.size(); ++z) {
         int i = table[z].coord_index;
         int j = table[table[z].next_index].coord_index;
         double temp_dist = distance(i, k) + distance(k, j) - distance(i, j);
@@ -139,6 +140,7 @@ void PartB::find_and_add_min_edge(int k) {
             smallest_index = z;
         }
     }
+    
     put_after(smallest_index, k);
     total += smallest;
 }

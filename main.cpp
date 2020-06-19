@@ -96,7 +96,10 @@ int main(int argc, char * argv[]) {
         PartA mist (all_coordinates, mode);
         mist.prims_algorithm();
     }
-    
+    else if(mode == FASTTSP) {
+        PartB b(all_coordinates, mode);
+        b.find_fast();
+    }
     
     
     return 0;
