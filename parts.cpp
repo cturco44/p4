@@ -212,7 +212,7 @@ void PartB::copy_into_vector(std::vector<int> &vec, double &best_dist) {
 void PartC::driver() {
     genPerms(1);
     cout << best_path_dist << "\n";
-    for(int i = 0; i < best_path.size(); ++i) {
+    for(int i = 0; i < (int)best_path.size(); ++i) {
         cout << best_path[i] << " ";
     }
     cout << "\n";
