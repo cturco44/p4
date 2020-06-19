@@ -91,6 +91,9 @@ double PartA::prims_algorithm_c(std::vector<int> &path, int start) {
             }
         }
     }
+    for(int i = start; i < (int)path.size(); ++i) {
+        table[path[i]] = {};
+    }
     return running_total;
 }
 double PartA::distance(int a, int b) const {
@@ -208,6 +211,7 @@ void PartB::copy_into_vector(std::vector<int> &vec, double &best_dist) {
 // =============================== Part C ================================== //
 void PartC::driver() {
     genPerms(1);
+    cout << best_path_dist << "\n";
     for(int i = 0; i < best_path.size(); ++i) {
         cout << best_path[i] << " ";
     }
@@ -215,9 +219,6 @@ void PartC::driver() {
 }
 void PartC::genPerms(size_t permLength) {
     if (permLength == path.size()) {
-        if(best_path == path) {
-            cout << "hi\n";
-        }
         
         path_dist += lookup(path.back(), path.front());
         if(path_dist < best_path_dist) {
@@ -241,22 +242,20 @@ void PartC::genPerms(size_t permLength) {
     } // for
 }
 bool PartC::promising(size_t permLength) {
-    return true;
     if(path.size() - permLength - 1 < 6) {
         return true;
     }
     return lowerbound(permLength) < best_path_dist;
 }
 double PartC::lowerbound(size_t permLength) {
-    PartA a(all_coordinates, OPTTST);
-    double min = a.prims_algorithm_c(path, int(permLength + 1));
+    double min = mst_finder.prims_algorithm_c(path, int(permLength + 1));
     double smallest_first_arm = shortest_arm(0, permLength);
     if(permLength == 1) {
-        return min + (2*smallest_first_arm);
+        return path_dist + min + (2*smallest_first_arm);
     }
     double second_arm = shortest_arm((int)permLength - 1, permLength);
 
-    return min + smallest_first_arm + second_arm;
+    return path_dist + min + smallest_first_arm + second_arm;
 }
 double PartC::distance(int a, int b) const {
     double a_x = (double)all_coordinates[a].x;
@@ -266,10 +265,10 @@ double PartC::distance(int a, int b) const {
     return sqrt(((b_x - a_x) * (b_x - a_x)) + ((b_y - a_y) * (b_y - a_y)));
 }
 
-double PartC::shortest_arm(int a, size_t permLength) const {
+double PartC::shortest_arm(int a, size_t permLength) {
     double smallest = numeric_limits<double>::infinity();
     for(size_t i = permLength; i < path.size(); ++i) {
-        double temp = distance(path[a], path[i]);
+        double temp = lookup(path[a], path[i]);
         if (temp < smallest) {
             smallest = temp;
         }

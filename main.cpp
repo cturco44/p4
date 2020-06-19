@@ -65,7 +65,7 @@ int read_args(int argc, char* argv[]) {
 void read_in(vector<Coordinate> &all_coordinates, int mode) {
     int vector_size;
     cin >> vector_size;
-    all_coordinates.reserve(vector_size);
+    all_coordinates.reserve((unsigned long)vector_size);
     
     bool part_a = false;
     if (mode == MST) {
@@ -92,6 +92,11 @@ int main(int argc, char * argv[]) {
     vector<Coordinate> all_coordinates;
     read_in(all_coordinates, mode);
 
+//    vector<int> bug = {0,1,2,3,4,5,6,7,8};
+//    PartA test(all_coordinates, MST);
+//    cout << test.prims_algorithm_c(bug, 4) << endl;
+    
+    
     if(mode == MST) {
         PartA mist (all_coordinates, mode);
         mist.prims_algorithm();

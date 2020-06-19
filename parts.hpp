@@ -140,7 +140,7 @@ class PartC {
 public:
     PartC(std::vector<Coordinate> &vec)
     //Initializer list
-    : dist_matrix{vec.size(),
+    : mst_finder{vec, OPTTST}, dist_matrix{vec.size(),
         std::vector<double>(vec.size(), std::numeric_limits<double>::infinity())},
     all_coordinates(vec), path_dist(0), best_path_dist(0) {
         
@@ -161,6 +161,7 @@ public:
     bool promising(size_t permLength);
     double lowerbound(size_t permLength);
 private:
+    PartA mst_finder;
     std::vector<std::vector<double>> dist_matrix;
     std::vector<int> path;
     std::vector<int> best_path;
@@ -169,7 +170,7 @@ private:
     double best_path_dist;
     
     double distance(int a, int b) const;
-    double shortest_arm(int a, size_t permLength) const;
+    double shortest_arm(int a, size_t permLength);
     void push_dist(size_t a, size_t b, double dist);
     double lookup(size_t index1, size_t index2);
     double total_path();
