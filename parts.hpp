@@ -56,12 +56,6 @@ struct Prim {
     
     Prim() : visited(false), weight(std::numeric_limits<double>::infinity()) {}
     
-    Prim(int mode) :
-    visited(false), weight(std::numeric_limits<double>::infinity()) {
-        if(mode == OPTTST) {
-            visited = true;
-        }
-    }
     
 };
 class PartA {
@@ -82,6 +76,7 @@ public:
     }
     
     void prims_algorithm(int start_index = 0);
+    double prims_algorithm_c(std::vector<int> &path, int start);
     void set_num_true(int num_true_in) {
         num_true = num_true_in;
     }
@@ -117,8 +112,15 @@ public:
         in_path.resize(all_coordinates.size());
         std::fill(in_path.begin(), in_path.end(), false);
     }
+    PartB(const std::vector<Coordinate> &vec, int mode_in)
+    : all_coordinates(vec), total(0), mode(mode_in) {
+        table.reserve(all_coordinates.size());
+        in_path.resize(all_coordinates.size());
+        std::fill(in_path.begin(), in_path.end(), false);
+    }
     
     void find_fast();
+    void copy_into_vector(std::vector<int> &vec, double &best_dist);
 
 private:
     const std::vector<Coordinate> &all_coordinates;
@@ -137,20 +139,42 @@ private:
 class PartC {
 public:
     PartC(std::vector<Coordinate> &vec)
-    : all_coordinates(vec), path_dist(0), best_path_dist(0) {
+    //Initializer list
+    : dist_matrix{vec.size(),
+        std::vector<double>(vec.size(), std::numeric_limits<double>::infinity())},
+    all_coordinates(vec), path_dist(0), best_path_dist(0) {
+        
         path.reserve(all_coordinates.size());
         best_path.reserve(all_coordinates.size());
+        
+        PartB b(all_coordinates, OPTTST);
+        b.find_fast();
+        b.copy_into_vector(best_path, best_path_dist);
+        
+        for(int i = 0; i < (double)all_coordinates.size(); ++i) {
+            path.push_back(i);
+        }
+        
     }
-    
+    void driver();
     void genPerms(size_t permLength);
     bool promising(size_t permLength);
     double lowerbound(size_t permLength);
 private:
+    std::vector<std::vector<double>> dist_matrix;
     std::vector<int> path;
     std::vector<int> best_path;
     const std::vector<Coordinate> &all_coordinates;
     double path_dist;
     double best_path_dist;
+    
+    double distance(int a, int b) const;
+    double shortest_arm(int a, size_t permLength) const;
+    void push_dist(size_t a, size_t b, double dist);
+    double lookup(size_t index1, size_t index2);
+    double total_path();
+   
+    
     
 };
 

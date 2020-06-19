@@ -58,7 +58,41 @@ void PartA::prims_algorithm(int start_index) {
     }
     
 }
-
+double PartA::prims_algorithm_c(std::vector<int> &path, int start) {
+    int start_index = path[start];
+    table[start_index].parent = NULL_PARENT;
+    table[start_index].weight = 0;
+    
+    double running_total = 0;
+    for(int out = 0; out < (int)path.size() - start; ++out) {
+        int smallest_index = 0;
+        double smallest = std::numeric_limits<double>::infinity();
+        for(int i = start; i < (int)path.size(); ++i) {
+            if(!table[path[i]].visited) {
+                if(table[path[i]].weight < smallest) {
+                    smallest = table[path[i]].weight;
+                    smallest_index = path[i];
+                    
+                }
+                
+            }
+        }
+        
+        table[smallest_index].visited = true;
+        running_total += sqrt(smallest);
+        
+        for(int i = start; i < (int)path.size(); ++i) {
+            if(!table[path[i]].visited) {
+                double dist = distance(smallest_index, path[i]);
+                if(dist < table[path[i]].weight) {
+                    table[path[i]].weight = dist;
+                    table[path[i]].parent = smallest_index;
+                }
+            }
+        }
+    }
+    return running_total;
+}
 double PartA::distance(int a, int b) const {
     if(mode == MST) {
         if(all_coordinates[a].terrain == SEA && all_coordinates[b].terrain == LAND) {
@@ -162,29 +196,103 @@ void PartB::print() const {
     } while (index != 0);
     cout << "\n";
 }
+void PartB::copy_into_vector(std::vector<int> &vec, double &best_dist) {
+    best_dist = total;
+    int index  = 0;
+    do {
+        vec.push_back(table[index].coord_index);
+        index = table[index].next_index;
+    } while (index != 0);
+
+}
 // =============================== Part C ================================== //
+void PartC::driver() {
+    genPerms(1);
+    for(int i = 0; i < best_path.size(); ++i) {
+        cout << best_path[i] << " ";
+    }
+    cout << "\n";
+}
 void PartC::genPerms(size_t permLength) {
     if (permLength == path.size()) {
-      // Do something with the path
-      return;
+        if(best_path == path) {
+            cout << "hi\n";
+        }
+        
+        path_dist += lookup(path.back(), path.front());
+        if(path_dist < best_path_dist) {
+            best_path_dist = path_dist;
+            best_path = path;
+        }
+        path_dist -= lookup(path.back(), path.front());
+        
+        // Do something with the path
+        return;
     } // if
     if (!promising(permLength))
-      return;
+        return;
     for (size_t i = permLength; i < path.size(); ++i) {
-      swap(path[permLength], path[i]);
-      genPerms(permLength + 1);
-      swap(path[permLength], path[i]);
+        swap(path[permLength], path[i]);
+
+        path_dist += lookup(path[permLength], path[permLength - 1]);
+        genPerms(permLength + 1);
+        path_dist -= lookup(path[permLength], path[permLength - 1]);
+        swap(path[permLength], path[i]);
     } // for
 }
 bool PartC::promising(size_t permLength) {
-    if(path.size() - permLength < 6) {
+    return true;
+    if(path.size() - permLength - 1 < 6) {
         return true;
     }
-    return lowerbound(permLength) < path_dist;
+    return lowerbound(permLength) < best_path_dist;
 }
 double PartC::lowerbound(size_t permLength) {
     PartA a(all_coordinates, OPTTST);
-    
-    
-    return 2;
+    double min = a.prims_algorithm_c(path, int(permLength + 1));
+    double smallest_first_arm = shortest_arm(0, permLength);
+    if(permLength == 1) {
+        return min + (2*smallest_first_arm);
+    }
+    double second_arm = shortest_arm((int)permLength - 1, permLength);
+
+    return min + smallest_first_arm + second_arm;
+}
+double PartC::distance(int a, int b) const {
+    double a_x = (double)all_coordinates[a].x;
+    double a_y = (double)all_coordinates[a].y;
+    double b_x = (double)all_coordinates[b].x;
+    double b_y = (double)all_coordinates[b].y;
+    return sqrt(((b_x - a_x) * (b_x - a_x)) + ((b_y - a_y) * (b_y - a_y)));
+}
+
+double PartC::shortest_arm(int a, size_t permLength) const {
+    double smallest = numeric_limits<double>::infinity();
+    for(size_t i = permLength; i < path.size(); ++i) {
+        double temp = distance(path[a], path[i]);
+        if (temp < smallest) {
+            smallest = temp;
+        }
+    }
+    return smallest;
+}
+
+void PartC::push_dist(size_t a, size_t b, double dist) {
+    dist_matrix[a][b] = dist;
+    dist_matrix[b][a] = dist;
+}
+double PartC::lookup(size_t index1, size_t index2) {
+    if(dist_matrix[index1][index2] != numeric_limits<double>::infinity()) {
+        return dist_matrix[index1][index2];
+    }
+    push_dist(index1, index2, distance((int)index1, (int)index2));
+    return dist_matrix[index1][index2];
+}
+double PartC::total_path() {
+    double sum = 0;
+    for(size_t i = 0; i < path.size() - 1; ++i) {
+        sum += lookup(i, i + 1);
+    }
+    sum += lookup(0, path.size() - 1);
+    return sum;
 }

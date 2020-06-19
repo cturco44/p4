@@ -91,7 +91,7 @@ int main(int argc, char * argv[]) {
     
     vector<Coordinate> all_coordinates;
     read_in(all_coordinates, mode);
-    
+
     if(mode == MST) {
         PartA mist (all_coordinates, mode);
         mist.prims_algorithm();
@@ -100,7 +100,10 @@ int main(int argc, char * argv[]) {
         PartB b(all_coordinates, mode);
         b.find_fast();
     }
-    
+    else {
+        PartC c(all_coordinates);
+        c.driver();
+    }
     
     return 0;
 }
