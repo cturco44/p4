@@ -245,7 +245,7 @@ bool PartC::promising(size_t permLength) {
     if(path.size() - permLength - 1 < 6) {
         return true;
     }
-    return lowerbound(permLength) < best_path_dist;
+    return lowerbound(permLength) < best_path_dist ;
 }
 double PartC::lowerbound(size_t permLength) {
     double min = mst_finder.prims_algorithm_c(path, int(permLength + 1));
