@@ -58,7 +58,7 @@ void PartA::prims_algorithm(int start_index) {
     }
     
 }
-double PartA::prims_algorithm_c(std::vector<int> &path, int start, Matrix* c) {
+double PartA::prims_algorithm_c(std::vector<int> &path, int start) {
     int start_index = path[start];
     table[start_index].parent = NULL_PARENT;
     table[start_index].weight = 0;
@@ -83,7 +83,7 @@ double PartA::prims_algorithm_c(std::vector<int> &path, int start, Matrix* c) {
         
         for(int i = start; i < (int)path.size(); ++i) {
             if(!table[path[i]].visited) {
-                double dist = c->lookup(smallest_index, path[i]);
+                double dist = distance(smallest_index, path[i]);
                 if(dist < table[path[i]].weight) {
                     table[path[i]].weight = dist;
                     table[path[i]].parent = smallest_index;
@@ -251,7 +251,7 @@ bool PartC::promising(size_t permLength) {
     return lowerbound(permLength) < best_path_dist ;
 }
 double PartC::lowerbound(size_t permLength) {
-    double min = mst_finder.prims_algorithm_c(path, int(permLength + 1), &part_a_matrix);
+    double min = mst_finder.prims_algorithm_c(path, int(permLength + 1));
     double smallest_first_arm = shortest_arm(0, permLength);
     if(permLength == 1) {
         return path_dist + min + (2*smallest_first_arm);
@@ -297,24 +297,4 @@ double PartC::total_path() {
     }
     sum += lookup(0, path.size() - 1);
     return sum;
-}
-
-double Matrix::lookup(size_t index1, size_t index2) {
-    if(dist_matrix[index1][index2] != numeric_limits<double>::infinity()) {
-        return dist_matrix[index1][index2];
-    }
-    push_dist(index1, index2, distance((int)index1, (int)index2));
-    return dist_matrix[index1][index2];
-}
-
-void Matrix::push_dist(size_t a, size_t b, double dist) {
-    dist_matrix[a][b] = dist;
-    dist_matrix[b][a] = dist;
-}
-double Matrix::distance(int a, int b) const {
-    double a_x = (double)all_coordinates[a].x;
-    double a_y = (double)all_coordinates[a].y;
-    double b_x = (double)all_coordinates[b].x;
-    double b_y = (double)all_coordinates[b].y;
-    return sqrt(((b_x - a_x) * (b_x - a_x)) + ((b_y - a_y) * (b_y - a_y)));
 }

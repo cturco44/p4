@@ -47,19 +47,6 @@ struct Coordinate {
 
     }
 };
-class Matrix {
-public:
-    Matrix(std::vector<std::vector<double>> &dist_matrix_in, const std::vector<Coordinate> &all_coordinates_in) : dist_matrix(dist_matrix_in),
-    all_coordinates(all_coordinates_in) {}
-    
-    double lookup(size_t index1, size_t index2);
-    void push_dist(size_t a, size_t b, double dist);
-    double distance(int a, int b) const;
-private:
-    std::vector<std::vector<double>> &dist_matrix;
-    const std::vector<Coordinate> &all_coordinates;
-    
-};
 
 // =============================== Part A ================================== //
 struct Prim {
@@ -89,7 +76,7 @@ public:
     }
     
     void prims_algorithm(int start_index = 0);
-    double prims_algorithm_c(std::vector<int> &path, int start, Matrix* c);
+    double prims_algorithm_c(std::vector<int> &path, int start);
     void set_num_true(int num_true_in) {
         num_true = num_true_in;
     }
@@ -149,16 +136,13 @@ private:
     void print() const;
 };
 // =============================== Part C ================================== //
-
-
 class PartC {
 public:
     PartC(std::vector<Coordinate> &vec)
     //Initializer list
     : mst_finder{vec, OPTTST}, dist_matrix{vec.size(),
         std::vector<double>(vec.size(), std::numeric_limits<double>::infinity())},
-    all_coordinates(vec), part_a_matrix{dist_matrix, all_coordinates},
-    path_dist(0), best_path_dist(0) {
+    all_coordinates(vec), path_dist(0), best_path_dist(0) {
         
         path.reserve(all_coordinates.size());
         best_path.reserve(all_coordinates.size());
@@ -176,24 +160,23 @@ public:
     void genPerms(size_t permLength);
     bool promising(size_t permLength);
     double lowerbound(size_t permLength);
-    double lookup(size_t index1, size_t index2);
 private:
     PartA mst_finder;
     std::vector<std::vector<double>> dist_matrix;
     std::vector<int> path;
     std::vector<int> best_path;
     const std::vector<Coordinate> &all_coordinates;
-    Matrix part_a_matrix;
     double path_dist;
     double best_path_dist;
     
     double distance(int a, int b) const;
     double shortest_arm(int a, size_t permLength);
     void push_dist(size_t a, size_t b, double dist);
-    
+    double lookup(size_t index1, size_t index2);
     double total_path();
-
+   
+    
+    
 };
-
 
 #endif /* parts_hpp */
