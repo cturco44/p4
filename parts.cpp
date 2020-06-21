@@ -245,6 +245,9 @@ bool PartC::promising(size_t permLength) {
     if(path.size() - permLength - 1 < 6) {
         return true;
     }
+    if(path_dist > best_path_dist) {
+        return false;
+    }
     return lowerbound(permLength) < best_path_dist ;
 }
 double PartC::lowerbound(size_t permLength) {
