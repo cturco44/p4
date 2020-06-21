@@ -76,7 +76,7 @@ public:
     }
     
     void prims_algorithm(int start_index = 0);
-    double prims_algorithm_c(std::vector<int> &path, int start);
+    double prims_algorithm_c(std::vector<int> &path, int start, std::vector<std::vector<double>> &dist_matrix);
     void set_num_true(int num_true_in) {
         num_true = num_true_in;
     }
@@ -91,6 +91,11 @@ private:
     
     double distance(int a, int b) const;
     void print_edges() const;
+    
+    double lookup(size_t index1, size_t index2, std::vector<std::vector<double>> &dist_matrix);
+    void push_dist(size_t a, size_t b, double dist, std::vector<std::vector<double>> &dist_matrix);
+    double distance2(int a, int b) const;
+    
     
 };
 
@@ -140,8 +145,9 @@ class PartC {
 public:
     PartC(std::vector<Coordinate> &vec)
     //Initializer list
-    : mst_finder{vec, OPTTST}, dist_matrix{vec.size(),
+    :  dist_matrix{vec.size(),
         std::vector<double>(vec.size(), std::numeric_limits<double>::infinity())},
+    mst_finder{vec, OPTTST},
     all_coordinates(vec), path_dist(0), best_path_dist(0) {
         
         path.reserve(all_coordinates.size());
@@ -160,9 +166,11 @@ public:
     void genPerms(size_t permLength);
     bool promising(size_t permLength);
     double lowerbound(size_t permLength);
+    double lookup(size_t index1, size_t index2);
+    std::vector<std::vector<double>> dist_matrix;
 private:
     PartA mst_finder;
-    std::vector<std::vector<double>> dist_matrix;
+    
     std::vector<int> path;
     std::vector<int> best_path;
     const std::vector<Coordinate> &all_coordinates;
@@ -172,7 +180,6 @@ private:
     double distance(int a, int b) const;
     double shortest_arm(int a, size_t permLength);
     void push_dist(size_t a, size_t b, double dist);
-    double lookup(size_t index1, size_t index2);
     double total_path();
    
     

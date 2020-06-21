@@ -58,7 +58,7 @@ void PartA::prims_algorithm(int start_index) {
     }
     
 }
-double PartA::prims_algorithm_c(std::vector<int> &path, int start) {
+double PartA::prims_algorithm_c(std::vector<int> &path, int start, vector<vector<double>> &dist_matrix) {
     int start_index = path[start];
     table[start_index].parent = NULL_PARENT;
     table[start_index].weight = 0;
@@ -79,11 +79,11 @@ double PartA::prims_algorithm_c(std::vector<int> &path, int start) {
         }
         
         table[smallest_index].visited = true;
-        running_total += sqrt(smallest);
+        running_total += smallest;
         
         for(int i = start; i < (int)path.size(); ++i) {
             if(!table[path[i]].visited) {
-                double dist = distance(smallest_index, path[i]);
+                double dist = lookup(smallest_index, path[i], dist_matrix);
                 if(dist < table[path[i]].weight) {
                     table[path[i]].weight = dist;
                     table[path[i]].parent = smallest_index;
@@ -121,6 +121,25 @@ void PartA::print_edges() const {
     }
 }
 
+double PartA::lookup(size_t index1, size_t index2, std::vector<std::vector<double>> &dist_matrix) {
+    if(dist_matrix[index1][index2] != numeric_limits<double>::infinity()) {
+        return dist_matrix[index1][index2];
+    }
+    push_dist(index1, index2, distance2((int)index1, (int)index2), dist_matrix);
+    return dist_matrix[index1][index2];
+}
+void PartA::push_dist(size_t a, size_t b, double dist, std::vector<std::vector<double>> &dist_matrix) {
+    dist_matrix[a][b] = dist;
+    dist_matrix[b][a] = dist;
+}
+double PartA::distance2(int a, int b) const {
+    double a_x = (double)all_coordinates[a].x;
+    double a_y = (double)all_coordinates[a].y;
+    double b_x = (double)all_coordinates[b].x;
+    double b_y = (double)all_coordinates[b].y;
+    return sqrt(((b_x - a_x) * (b_x - a_x)) + ((b_y - a_y) * (b_y - a_y)));
+}
+void push_dist(size_t a, size_t b, double dist, std::vector<std::vector<double>> &dist_matrix);
 // =============================== Part B ================================== //
 double PartB::distance(int a, int b) const {
     double a_x = (double)all_coordinates[a].x;
@@ -245,10 +264,11 @@ bool PartC::promising(size_t permLength) {
     if(path.size() - permLength - 1 < 6) {
         return true;
     }
-    return lowerbound(permLength) < best_path_dist ;
+    return lowerbound(permLength) < best_path_dist;
 }
 double PartC::lowerbound(size_t permLength) {
-    double min = mst_finder.prims_algorithm_c(path, int(permLength + 1));
+    
+    double min = mst_finder.prims_algorithm_c(path, int(permLength + 1), dist_matrix);
     double smallest_first_arm = shortest_arm(0, permLength);
     if(permLength == 1) {
         return path_dist + min + (2*smallest_first_arm);
