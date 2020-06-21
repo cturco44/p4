@@ -151,9 +151,7 @@ public:
         b.find_fast();
         b.copy_into_vector(best_path, best_path_dist);
         
-        for(int i = 0; i < (double)all_coordinates.size(); ++i) {
-            path.push_back(i);
-        }
+        path = best_path;
         
     }
     void driver();

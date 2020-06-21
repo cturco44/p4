@@ -131,24 +131,18 @@ double PartB::distance(int a, int b) const {
 }
 void PartB::find_fast() {
     //First element of table
-    table.emplace_back(0,0);
+    table.emplace_back(0,1);
     in_path[0] = true;
     
     //Find second element of table
-    int smallest_index = 0;
-    double smallest = numeric_limits<double>::infinity();
-    for (int i = 1; i < (int)all_coordinates.size(); ++i) {
-        double dist_temp = distance(0, i);
-        if(dist_temp < smallest) {
-            smallest_index = i;
-            smallest = dist_temp;
-        }
-    }
-    table[0].next_index = 1;
-    table.emplace_back(smallest_index, 0);
-    in_path[smallest_index] = true;
-    total += 2*smallest;
+
+    table.emplace_back(1,2);
+    in_path[1] = true;
+    table.emplace_back(2,0);
+    in_path[2] = true;
     
+    total = distance(0, 1) + distance(1, 2) + distance(2, 0);
+
     // Coordinate 0 and smallest index are currently in path
     for(int j = 0; j < (int)all_coordinates.size(); ++j) {
         
@@ -244,6 +238,9 @@ void PartC::genPerms(size_t permLength) {
 bool PartC::promising(size_t permLength) {
     if(path.size() - permLength - 1 < 6) {
         return true;
+    }
+    if(path_dist > best_path_dist) {
+        return false;
     }
     return lowerbound(permLength) < best_path_dist ;
 }
