@@ -268,7 +268,7 @@ bool PartC::promising(size_t permLength) {
 }
 double PartC::lowerbound(size_t permLength) {
     
-    double min = mst_finder.prims_algorithm_c(path, int(permLength + 1), dist_matrix);
+    double min = mst_finder.prims_algorithm_c(path, int(permLength), dist_matrix);
     double smallest_first_arm = shortest_arm(0, permLength);
     if(permLength == 1) {
         return path_dist + min + (2*smallest_first_arm);
