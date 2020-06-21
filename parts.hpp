@@ -91,6 +91,7 @@ private:
     
     double distance(int a, int b) const;
     void print_edges() const;
+    double distance2(int a, int b) const;
     
 };
 

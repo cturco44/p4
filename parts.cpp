@@ -83,7 +83,7 @@ double PartA::prims_algorithm_c(std::vector<int> &path, int start) {
         
         for(int i = start; i < (int)path.size(); ++i) {
             if(!table[path[i]].visited) {
-                double dist = distance(smallest_index, path[i]);
+                double dist = distance2(smallest_index, path[i]);
                 if(dist < table[path[i]].weight) {
                     table[path[i]].weight = dist;
                     table[path[i]].parent = smallest_index;
@@ -105,6 +105,14 @@ double PartA::distance(int a, int b) const {
             return numeric_limits<double>::infinity();
         }
     }
+
+    double a_x = (double)all_coordinates[a].x;
+    double a_y = (double)all_coordinates[a].y;
+    double b_x = (double)all_coordinates[b].x;
+    double b_y = (double)all_coordinates[b].y;
+    return ((b_x - a_x) * (b_x - a_x)) + ((b_y - a_y) * (b_y - a_y));
+}
+double PartA::distance2(int a, int b) const {
 
     double a_x = (double)all_coordinates[a].x;
     double a_y = (double)all_coordinates[a].y;
